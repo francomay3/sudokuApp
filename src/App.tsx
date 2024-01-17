@@ -74,12 +74,12 @@ const Cell = styled.div<{
 `;
 
 function SudokuApp() {
-  const [numbers, setNumbers] = useState<State>(getRandomSolvedSudoku());
+  const [state, setState] = useState<State>(getRandomSolvedSudoku());
 
   return (
     <Wrapper>
       <Grid>
-        {numbers.map((row, rowIndex) =>
+        {state.map((row, rowIndex) =>
           row.map((number, columnIndex) => (
             <Cell
               key={`${rowIndex}-${columnIndex}`}
@@ -97,7 +97,7 @@ function SudokuApp() {
           ))
         )}
       </Grid>
-      <Button onClick={() => setNumbers(getRandomSolvedSudoku())}>
+      <Button onClick={() => setState(getRandomSolvedSudoku())}>
         Shuffle board!
       </Button>
     </Wrapper>
