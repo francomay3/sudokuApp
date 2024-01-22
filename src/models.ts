@@ -7,14 +7,15 @@ export type Input = {
 };
 
 type Row = [Input, Input, Input, Input, Input, Input, Input, Input, Input];
+
 export type State = [Row, Row, Row, Row, Row, Row, Row, Row, Row];
 
 export enum Difficulty {
-  Easy = "easy",
-  Medium = "medium",
-  Hard = "hard",
-  Expert = "expert",
-  Master = "master",
+  Easy = "Easy",
+  Medium = "Medium",
+  Hard = "Hard",
+  Expert = "Expert",
+  Master = "Master",
 }
 
 export type InitialNumbersRow = [
