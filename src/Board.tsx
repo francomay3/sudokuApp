@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { State } from "./models";
+import WrapIf from "./WrapIf";
 
 const shadow = "#dee0f3";
 const black = "#303139";
@@ -79,7 +80,9 @@ const Board = ({ state }: BoardProps) => {
               key={`${rowIndex}-${columnIndex}`}
               row={rowIndex + 1}
             >
-              {input.value}
+              <WrapIf condition={input.isPreset} Wrapper="strong">
+                {input.value}
+              </WrapIf>
             </Cell>
           ))
         )}
