@@ -1,80 +1,54 @@
 import flatten from "lodash/flatten";
-import { State } from "./models";
+import { State, Input, Value, Difficulty } from "./models";
+import * as initialValues from "./initialValues";
 
-const n123 = [1, 2, 3];
-const n789 = [7, 8, 9];
-const n456 = [4, 5, 6];
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Func = (...args: any[]) => any;
 
 const compose =
-  (...fns: any[]) =>
+  (...fns: Func[]) =>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (x: any) =>
     fns.reduceRight((y, f) => f(y), x);
 
-const shiftArrayTimes = (array: any[], times: number) => {
-  const shiftedArray = [...array];
-  for (let i = 0; i < times; i++) {
-    shiftedArray.unshift(shiftedArray.pop());
-  }
-  return shiftedArray;
-};
+export const createInput: (value: Value) => Input = (value) => ({
+  notes: [],
+  value,
+  isPreset: !!value,
+});
 
-const bigSquare1 = [n123, n789, n456];
-const bigSquare2 = [n456, n123, n789];
-const bigSquare3 = [n789, n456, n123];
+const numbersToState = (numbers: Value[][]): State =>
+  numbers.map((row) =>
+    row.map((value) => {
+      return createInput(value);
+    })
+  ) as State;
 
-const bigSquaresRow1 = [bigSquare1, bigSquare2, bigSquare3];
-const bigSquaresRow2 = [bigSquare3, bigSquare1, bigSquare2];
-const bigSquaresRow3 = [bigSquare2, bigSquare3, bigSquare1];
-
-const bigSquaresToRows = (bigSquaresRow: number[][][]) => {
-  const row1 = [
-    ...bigSquaresRow[0][0],
-    ...bigSquaresRow[1][0],
-    ...bigSquaresRow[2][0],
-  ];
-  const row2 = [
-    ...bigSquaresRow[0][1],
-    ...bigSquaresRow[1][1],
-    ...bigSquaresRow[2][1],
-  ];
-  const row3 = [
-    ...bigSquaresRow[0][2],
-    ...bigSquaresRow[1][2],
-    ...bigSquaresRow[2][2],
-  ];
-  return [row1, row2, row3];
-};
-
-const initialNumbers: State = [
-  ...bigSquaresToRows(bigSquaresRow1),
-  ...bigSquaresToRows(bigSquaresRow2).map((row) => shiftArrayTimes(row, 1)),
-  ...bigSquaresToRows(bigSquaresRow3).map((row) => shiftArrayTimes(row, 2)),
-];
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const shuffleArray = (array: any[]) => array.sort(() => Math.random() - 0.5);
 
-const rotate90 = (rows: any[][]) => {
-  const columns: number[][] = [];
+const rotate90: (state: State) => State = (rows: State) => {
+  const columns: Input[][] = [];
   rows.forEach((_row, i) => {
     const column = rows.map((row) => row[i]);
     columns.push(column);
   });
-  return columns;
+  return columns as State;
 };
 
-const shuffleRows = (numbers: State) =>
+const shuffleRows: (numbers: State) => State = (numbers) =>
   flatten(
     shuffleArray([
       shuffleArray([numbers[0], numbers[1], numbers[2]]),
       shuffleArray([numbers[3], numbers[4], numbers[5]]),
       shuffleArray([numbers[6], numbers[7], numbers[8]]),
     ])
-  );
+  ) as State;
 
 const shuffleRowsAndRotate = (numbers: State) =>
   compose(shuffleRows, rotate90)(numbers);
 
-const shuffleNumbers = (numbers: State) =>
+const shuffleNumbers: (numbers: State) => State = (numbers) =>
   compose(
     shuffleRowsAndRotate,
     shuffleRowsAndRotate,
@@ -82,6 +56,27 @@ const shuffleNumbers = (numbers: State) =>
     shuffleRowsAndRotate
   )(numbers);
 
-const getRandomSolvedSudoku = () => shuffleNumbers(initialNumbers);
+const getRandomSolvedSudoku = (difficulty: Difficulty) => {
+  let unshuffledValues;
+  switch (difficulty) {
+    case Difficulty.Easy:
+      unshuffledValues = initialValues.easy;
+      break;
+    case Difficulty.Medium:
+      unshuffledValues = initialValues.medium;
+      break;
+    case Difficulty.Hard:
+      unshuffledValues = initialValues.hard;
+      break;
+    case Difficulty.Expert:
+      unshuffledValues = initialValues.expert;
+      break;
+    case Difficulty.Master:
+      unshuffledValues = initialValues.master;
+      break;
+  }
+
+  return compose(shuffleNumbers, numbersToState)(unshuffledValues);
+};
 
 export default getRandomSolvedSudoku;
