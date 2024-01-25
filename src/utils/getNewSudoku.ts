@@ -1,5 +1,5 @@
 import flatten from "lodash/flatten";
-import { State, Input, Value, Difficulty } from "./models";
+import { State, Input, Value, Difficulty } from "../models";
 import * as initialValues from "./initialValues";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

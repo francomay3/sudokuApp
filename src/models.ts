@@ -1,5 +1,10 @@
 export type Value = number | null;
 
+export enum InputMode {
+  Notes = "Notes",
+  Value = "Value",
+}
+
 export type Input = {
   notes: number[];
   value: Value;
