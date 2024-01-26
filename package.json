@@ -1,8 +1,7 @@
 {
-  "name": "sudoku",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "@francomay3/sudoku",
+  "version": "1.0.0",
+  "main": "dist/SudokuApp.umd.js",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
