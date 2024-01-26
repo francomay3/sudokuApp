@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import { Difficulty, State, Value, InputMode } from "../models";
 import getNewSudoku from "../utils/getNewSudoku";
+import { getValidatedState } from "../utils/validationUtils";
 
 const useSudokuStateManager = () => {
   const [inputMode, setInputMode] = useState<InputMode>(InputMode.Value);
@@ -69,14 +70,14 @@ const useSudokuStateManager = () => {
     ) {
       return;
     }
-    const newState: State = [...state];
+    const newState = structuredClone(state);
     if (newValue === selectedCellValue) {
       newState[selectedCell.row][selectedCell.column].value = null;
-      setState(newState);
+      setState(getValidatedState(newState));
       return;
     }
     newState[selectedCell.row][selectedCell.column].value = newValue;
-    setState(newState);
+    setState(getValidatedState(newState));
   };
   const setDifficultyAndRestartGame = (difficulty: Difficulty) => {
     setDifficulty(difficulty);
@@ -86,13 +87,16 @@ const useSudokuStateManager = () => {
     setState(getNewSudoku(difficulty));
   };
   const toggleInputMode = () => {
-    console.log("toggleInputMode");
     setInputMode(
       inputMode === InputMode.Value ? InputMode.Notes : InputMode.Value
     );
   };
 
+  const cellHasError = (row: number, column: number) =>
+    state[row][column].error;
+
   return {
+    cellHasError,
     clearCellNotes,
     addCellNote,
     cellIsEditable,

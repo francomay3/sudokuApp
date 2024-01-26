@@ -7,16 +7,17 @@ import * as initialValues from "./initialValues";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Func = (...args: any[]) => any;
 
-const compose =
+export const compose =
   (...fns: Func[]) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (x: any) =>
     fns.reduceRight((y, f) => f(y), x);
 
 export const createInput: (value: Value) => Input = (value) => ({
+  error: false,
+  isPreset: !!value,
   notes: [],
   value,
-  isPreset: !!value,
 });
 
 const numbersToState = (numbers: Value[][]): State =>
@@ -29,7 +30,7 @@ const numbersToState = (numbers: Value[][]): State =>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const shuffleArray = (array: any[]) => array.sort(() => Math.random() - 0.5);
 
-const rotate90: (state: State) => State = (rows: State) => {
+export const rotate90: (state: State) => State = (rows: State) => {
   const columns: Input[][] = [];
   rows.forEach((_row, i) => {
     const column = rows.map((row) => row[i]);

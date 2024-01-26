@@ -9,9 +9,20 @@ export type Input = {
   notes: number[];
   value: Value;
   isPreset: boolean;
+  error: boolean;
 };
 
-type Row = [Input, Input, Input, Input, Input, Input, Input, Input, Input];
+export type Row = [
+  Input,
+  Input,
+  Input,
+  Input,
+  Input,
+  Input,
+  Input,
+  Input,
+  Input
+];
 
 export type State = [Row, Row, Row, Row, Row, Row, Row, Row, Row];
 

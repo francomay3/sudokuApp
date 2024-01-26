@@ -3,24 +3,47 @@ import styled from "styled-components";
 import { SudokuStateManager } from "../../hooks/useSudokuStateManager";
 import { Value } from "../../models";
 import {
-  selectedCellColor,
-  relevantCellsColor,
   boardLinesColor,
+  errorBackgroundColor,
+  inputTextColor,
+  relevantCellsColor,
+  selectedCellColor,
 } from "../../utils/styles";
 
 type WrapperProps = {
+  column: number;
+  hasError: boolean;
   isInLineOfSelectedCell: boolean;
   isSameValueAsSelectedCell: boolean;
   isSelected: boolean;
-  row: number;
-  column: number;
   isSelectedCellInBigSquare: boolean;
+  row: number;
   selectedCellIsEditable: boolean | null;
+};
+
+const getBackgroundColor = ({
+  isInLineOfSelectedCell,
+  isSelected,
+  isSameValueAsSelectedCell,
+  isSelectedCellInBigSquare,
+  hasError,
+}: WrapperProps) => {
+  if (hasError) {
+    return errorBackgroundColor;
+  }
+  if (isSelected || isSameValueAsSelectedCell) {
+    return selectedCellColor;
+  }
+  if (isInLineOfSelectedCell || isSelectedCellInBigSquare) {
+    return relevantCellsColor;
+  }
+  return "white";
 };
 
 const Wrapper = styled.div.withConfig({
   shouldForwardProp: (prop) =>
     ![
+      "hasError",
       "isInLineOfSelectedCell",
       "isSameValueAsSelectedCell",
       "isSelected",
@@ -28,17 +51,7 @@ const Wrapper = styled.div.withConfig({
       "selectedCellIsEditable",
     ].includes(prop),
 })<WrapperProps>`
-  background-color: ${({
-    isInLineOfSelectedCell,
-    isSelected,
-    isSameValueAsSelectedCell,
-    isSelectedCellInBigSquare,
-  }) =>
-    isSelected || isSameValueAsSelectedCell
-      ? selectedCellColor
-      : isInLineOfSelectedCell || isSelectedCellInBigSquare
-      ? relevantCellsColor
-      : "white"};
+  background-color: ${(props) => getBackgroundColor(props)};
   aspect-ratio: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -58,7 +71,12 @@ const Wrapper = styled.div.withConfig({
   user-select: none;
 `;
 
-const ValueWrapper = styled.div`
+const ValueWrapper = styled.div.withConfig({
+  shouldForwardProp: (prop) => !["isEditable"].includes(prop),
+})<{
+  isEditable: boolean;
+}>`
+  color: ${({ isEditable }) => (isEditable ? inputTextColor : "initial")};
   align-items: center;
   display: flex;
   font-size: 130%;
@@ -115,11 +133,12 @@ const Cell = ({
   value,
 }: CellProps) => {
   const {
-    cellNotes,
-    setSelectedCell,
-    selectedCellValue,
-    selectedCell,
+    cellHasError,
     cellIsEditable,
+    cellNotes,
+    selectedCell,
+    selectedCellValue,
+    setSelectedCell,
   } = sudokuStateManager;
 
   const selectedCellIsEditable =
@@ -141,6 +160,7 @@ const Cell = ({
 
   return (
     <Wrapper
+      hasError={cellHasError(row, column)}
       selectedCellIsEditable={selectedCellIsEditable}
       isSelectedCellInBigSquare={isSelectedCellInBigSquare}
       row={row}
@@ -151,7 +171,9 @@ const Cell = ({
       isSameValueAsSelectedCell={isSameValueAsSelectedCell}
     >
       {value ? (
-        <ValueWrapper>{value}</ValueWrapper>
+        <ValueWrapper isEditable={cellIsEditable(row, column)}>
+          {value}
+        </ValueWrapper>
       ) : (
         cellNotes(row, column).map((note) => (
           <NoteWrapper key={note} note={note}>
