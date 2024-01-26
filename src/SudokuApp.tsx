@@ -1,44 +1,99 @@
 import { Col, Stack } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import Dropdown from "react-bootstrap/Dropdown";
 import Row from "react-bootstrap/Row";
-import { Difficulty } from "./models";
 import Board from "./components/board/Board";
 import UserInputs from "./components/UserInputs";
 import useSudokuStateManager from "./hooks/useSudokuStateManager";
+import useKeyPress from "./hooks/useKeyPressed";
+import useClickAway from "./hooks/useClickAway";
+import NewGameControls from "./components/NewGameControls";
+import { InputMode } from "./models";
+import styled from "styled-components";
+
+const Wrapper = styled(Row)`
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: 1rem;
+    max-height: calc(100vh - 3rem);
+  }
+`;
 
 function SudokuApp() {
   const sudokuStateManager = useSudokuStateManager();
-  const { difficulty, setDifficulty, setNewGame } = sudokuStateManager;
+  const {
+    addCellNote,
+    cellIsEditable,
+    inputMode,
+    selectedCell,
+    setCellValue,
+    setSelectedCell,
+    toggleInputMode,
+  } = sudokuStateManager;
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (!selectedCell) {
+      return;
+    }
+    const { row, column } = selectedCell;
+    if (event.key === "ArrowDown") {
+      setSelectedCell({
+        row: row === 8 ? 0 : row + 1,
+        column,
+      });
+    }
+    if (event.key === "ArrowLeft") {
+      setSelectedCell({
+        row,
+        column: column === 0 ? 8 : column - 1,
+      });
+    }
+    if (event.key === "ArrowRight") {
+      setSelectedCell({
+        row,
+        column: column === 8 ? 0 : column + 1,
+      });
+    }
+    if (event.key === "ArrowUp") {
+      setSelectedCell({
+        row: row === 0 ? 8 : row - 1,
+        column,
+      });
+    }
+    if (event.key === "Tab") {
+      event.preventDefault();
+      toggleInputMode();
+    }
+    if (cellIsEditable(row, column)) {
+      if (inputMode === InputMode.Notes) {
+        if (event.key >= "1" && event.key <= "9") {
+          addCellNote(row, column, Number(event.key));
+        }
+      }
+      if (inputMode === InputMode.Value) {
+        if (event.key === "Backspace" || event.key === "Delete") {
+          setCellValue(row, column, null);
+        }
+        if (event.key >= "1" && event.key <= "9") {
+          setCellValue(row, column, Number(event.key));
+        }
+      }
+    }
+  };
+
+  useKeyPress(handleKeyDown);
+  const ref = useClickAway(() => setSelectedCell(null));
 
   return (
-    <Row>
+    <Wrapper ref={ref}>
       <Col xs={12} md={6}>
         <Stack gap={2}>
-          <Stack direction="horizontal" gap={2}>
-            <Button onClick={setNewGame}>New Game</Button>
-            <Dropdown
-              onSelect={(difficulty) => {
-                setDifficulty(difficulty as Difficulty);
-              }}
-            >
-              <Dropdown.Toggle>{difficulty}</Dropdown.Toggle>
-              <Dropdown.Menu>
-                {Object.values(Difficulty).map((difficulty) => (
-                  <Dropdown.Item eventKey={difficulty} key={difficulty}>
-                    {difficulty}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-          </Stack>
+          <NewGameControls sudokuStateManager={sudokuStateManager} />
           <Board sudokuStateManager={sudokuStateManager} />
         </Stack>
       </Col>
       <Col xs={12} md={6}>
-        <UserInputs />
+        <UserInputs sudokuStateManager={sudokuStateManager} />
       </Col>
-    </Row>
+    </Wrapper>
   );
 }
 

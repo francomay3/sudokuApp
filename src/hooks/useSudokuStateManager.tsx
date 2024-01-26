@@ -10,6 +10,7 @@ const useSudokuStateManager = () => {
     column: number;
   } | null>(null);
   const [state, setState] = useState<State>(getNewSudoku(Difficulty.Easy));
+
   const addCellNote = (row: number, column: number, value: number) => {
     const newState: State = [...state];
     const cell = newState[row][column];
@@ -22,15 +23,41 @@ const useSudokuStateManager = () => {
     setState(newState);
   };
   const cellIsEditable = (row: number, column: number) =>
-    !state[row][column].isPreset;
-  const cellNotes = (row: number, column: number) => state[row][column].notes;
-  const cellValue = (row: number, column: number) => state[row][column].value;
+    !state?.[row]?.[column].isPreset;
+
+  const handleSetSelectedCell = (
+    newSelectedCell: {
+      row: number;
+      column: number;
+    } | null
+  ) => {
+    if (!newSelectedCell) {
+      setSelectedCell(null);
+      return;
+    }
+    const { row, column } = newSelectedCell ?? {};
+    if (selectedCell?.row === row && selectedCell?.column === column) {
+      setSelectedCell(null);
+    } else {
+      setSelectedCell({ row, column });
+    }
+  };
+  const cellNotes = (row: number, column: number) =>
+    state?.[row]?.[column]?.notes ?? [];
+  const cellValue = (row: number, column: number) => state[row][column]?.value;
   const selectedCellValue = selectedCell
     ? state[selectedCell.row][selectedCell.column].value
     : null;
-  const setCellValue = (row: number, column: number, value: Value) => {
+  const setCellValue = (row?: number, column?: number, value?: Value) => {
+    if (
+      !selectedCell ||
+      !(typeof row === "number") ||
+      !(typeof column === "number")
+    ) {
+      return;
+    }
     const newState: State = [...state];
-    newState[row][column].value = value;
+    newState[row][column].value = value ?? null;
     setState(newState);
   };
   const setDifficultyAndRestartGame = (difficulty: Difficulty) => {
@@ -39,6 +66,12 @@ const useSudokuStateManager = () => {
   };
   const setNewGame = () => {
     setState(getNewSudoku(difficulty));
+  };
+  const toggleInputMode = () => {
+    console.log("toggleInputMode");
+    setInputMode(
+      inputMode === InputMode.Value ? InputMode.Notes : InputMode.Value
+    );
   };
 
   return {
@@ -52,9 +85,9 @@ const useSudokuStateManager = () => {
     selectedCellValue,
     setCellValue,
     setDifficulty: setDifficultyAndRestartGame,
-    setInputMode,
+    toggleInputMode,
     setNewGame,
-    setSelectedCell,
+    setSelectedCell: handleSetSelectedCell,
     state,
   };
 };
