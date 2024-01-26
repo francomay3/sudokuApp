@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Stack from "react-bootstrap/Stack";
 import styled from "styled-components";
@@ -86,17 +87,19 @@ function SudokuApp() {
   const ref = useClickAway(() => setSelectedCell(null));
 
   return (
-    <Wrapper ref={ref}>
-      <Col xs={12} md={6}>
-        <Stack gap={2}>
-          <NewGameControls sudokuStateManager={sudokuStateManager} />
-          <Board sudokuStateManager={sudokuStateManager} />
-        </Stack>
-      </Col>
-      <Col xs={12} md={6}>
-        <UserInputs sudokuStateManager={sudokuStateManager} />
-      </Col>
-    </Wrapper>
+    <Container>
+      <Wrapper ref={ref}>
+        <Col xs={12} md={6}>
+          <Stack gap={2}>
+            <NewGameControls sudokuStateManager={sudokuStateManager} />
+            <Board sudokuStateManager={sudokuStateManager} />
+          </Stack>
+        </Col>
+        <Col xs={12} md={6}>
+          <UserInputs sudokuStateManager={sudokuStateManager} />
+        </Col>
+      </Wrapper>
+    </Container>
   );
 }
 
