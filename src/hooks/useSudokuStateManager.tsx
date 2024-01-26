@@ -1,6 +1,7 @@
 import { useState } from "react";
-import getNewSudoku from "../utils/getNewSudoku";
+
 import { Difficulty, State, Value, InputMode } from "../models";
+import getNewSudoku from "../utils/getNewSudoku";
 
 const useSudokuStateManager = () => {
   const [inputMode, setInputMode] = useState<InputMode>(InputMode.Value);

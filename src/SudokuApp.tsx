@@ -1,13 +1,15 @@
-import { Col, Stack } from "react-bootstrap";
+import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import Board from "./components/board/Board";
-import UserInputs from "./components/UserInputs";
-import useSudokuStateManager from "./hooks/useSudokuStateManager";
-import useKeyPress from "./hooks/useKeyPressed";
-import useClickAway from "./hooks/useClickAway";
-import NewGameControls from "./components/NewGameControls";
-import { InputMode } from "./models";
+import Stack from "react-bootstrap/Stack";
 import styled from "styled-components";
+
+import Board from "./components/board/Board";
+import NewGameControls from "./components/NewGameControls";
+import UserInputs from "./components/UserInputs";
+import useClickAway from "./hooks/useClickAway";
+import useKeyPress from "./hooks/useKeyPressed";
+import useSudokuStateManager from "./hooks/useSudokuStateManager";
+import { InputMode } from "./models";
 
 const Wrapper = styled(Row)`
   @media (max-width: 767px) {

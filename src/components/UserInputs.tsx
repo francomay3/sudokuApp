@@ -1,6 +1,8 @@
-import { Button, ToggleButton } from "react-bootstrap";
-import { SudokuStateManager } from "../hooks/useSudokuStateManager";
+import Button from "react-bootstrap/Button";
+import ToggleButton from "react-bootstrap/ToggleButton";
 import styled from "styled-components";
+
+import { SudokuStateManager } from "../hooks/useSudokuStateManager";
 import { InputMode } from "../models";
 
 interface UserInputsProps {

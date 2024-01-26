@@ -1,6 +1,7 @@
-import { Stack } from "react-bootstrap";
-import NavBar from "./NavBar";
 import Container from "react-bootstrap/Container";
+import Stack from "react-bootstrap/Stack";
+
+import NavBar from "./NavBar";
 
 interface LayoutProps {
   children: React.ReactNode;

@@ -1,7 +1,9 @@
 import styled from "styled-components";
+
 import { SudokuStateManager } from "../../hooks/useSudokuStateManager";
-import Cell from "./Cell";
 import { boardLinesColor } from "../../utils/styles";
+
+import Cell from "./Cell";
 
 const Wrapper = styled.div`
   bottom: 0;

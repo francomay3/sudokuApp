@@ -1,8 +1,9 @@
 import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import Stack from "react-bootstrap/Stack";
-import { Difficulty } from "../models";
+
 import { SudokuStateManager } from "../hooks/useSudokuStateManager";
+import { Difficulty } from "../models";
 
 interface NewGameControlsProps {
   sudokuStateManager: SudokuStateManager;
