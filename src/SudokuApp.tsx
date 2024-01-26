@@ -69,15 +69,15 @@ function SudokuApp() {
     if (cellIsEditable(row, column)) {
       if (inputMode === InputMode.Notes) {
         if (event.key >= "1" && event.key <= "9") {
-          addCellNote(row, column, Number(event.key));
+          addCellNote(Number(event.key));
         }
       }
       if (inputMode === InputMode.Value) {
         if (event.key === "Backspace" || event.key === "Delete") {
-          setCellValue(row, column, null);
+          setCellValue(null);
         }
         if (event.key >= "1" && event.key <= "9") {
-          setCellValue(row, column, Number(event.key));
+          setCellValue(Number(event.key));
         }
       }
     }

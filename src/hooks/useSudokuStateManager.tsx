@@ -12,15 +12,27 @@ const useSudokuStateManager = () => {
   } | null>(null);
   const [state, setState] = useState<State>(getNewSudoku(Difficulty.Easy));
 
-  const addCellNote = (row: number, column: number, value: number) => {
+  const addCellNote = (value: number) => {
+    if (inputMode !== InputMode.Notes || !selectedCell || selectedCellValue) {
+      return;
+    }
     const newState: State = [...state];
-    const cell = newState[row][column];
+    const cell = newState[selectedCell.row][selectedCell.column];
     const index = cell.notes.indexOf(value);
     if (index === -1) {
       cell.notes.push(value);
     } else {
       cell.notes.splice(index, 1);
     }
+    setState(newState);
+  };
+  const clearCellNotes = () => {
+    if (!selectedCell || selectedCellValue) {
+      return;
+    }
+    const newState: State = [...state];
+    const cell = newState[selectedCell.row][selectedCell.column];
+    cell.notes = [];
     setState(newState);
   };
   const cellIsEditable = (row: number, column: number) =>
@@ -49,16 +61,21 @@ const useSudokuStateManager = () => {
   const selectedCellValue = selectedCell
     ? state[selectedCell.row][selectedCell.column].value
     : null;
-  const setCellValue = (row?: number, column?: number, value?: Value) => {
+  const setCellValue = (newValue: Value) => {
     if (
       !selectedCell ||
-      !(typeof row === "number") ||
-      !(typeof column === "number")
+      !cellIsEditable(selectedCell.row, selectedCell.column) ||
+      inputMode !== InputMode.Value
     ) {
       return;
     }
     const newState: State = [...state];
-    newState[row][column].value = value ?? null;
+    if (newValue === selectedCellValue) {
+      newState[selectedCell.row][selectedCell.column].value = null;
+      setState(newState);
+      return;
+    }
+    newState[selectedCell.row][selectedCell.column].value = newValue;
     setState(newState);
   };
   const setDifficultyAndRestartGame = (difficulty: Difficulty) => {
@@ -76,6 +93,7 @@ const useSudokuStateManager = () => {
   };
 
   return {
+    clearCellNotes,
     addCellNote,
     cellIsEditable,
     cellNotes,

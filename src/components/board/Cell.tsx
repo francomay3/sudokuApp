@@ -21,10 +21,11 @@ type WrapperProps = {
 const Wrapper = styled.div.withConfig({
   shouldForwardProp: (prop) =>
     ![
-      "isSameValueAsSelectedCell",
       "isInLineOfSelectedCell",
+      "isSameValueAsSelectedCell",
       "isSelected",
       "isSelectedCellInBigSquare",
+      "selectedCellIsEditable",
     ].includes(prop),
 })<WrapperProps>`
   background-color: ${({

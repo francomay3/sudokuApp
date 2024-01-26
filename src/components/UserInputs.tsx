@@ -19,8 +19,14 @@ const Grid = styled.div`
 `;
 
 const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
-  const { setCellValue, selectedCell, toggleInputMode, inputMode } =
-    sudokuStateManager;
+  const {
+    setCellValue,
+    selectedCell,
+    toggleInputMode,
+    addCellNote,
+    inputMode,
+    clearCellNotes,
+  } = sudokuStateManager;
   return (
     <Grid>
       <ToggleButton
@@ -36,7 +42,11 @@ const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
       <Button>Undo</Button>
       <Button
         onClick={() => {
-          setCellValue(selectedCell?.row, selectedCell?.column, null);
+          if (!selectedCell) {
+            return;
+          }
+          setCellValue(null);
+          clearCellNotes();
         }}
       >
         Erase
@@ -49,7 +59,11 @@ const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
             fontSize: "2rem",
           }}
           onClick={() => {
-            setCellValue(selectedCell?.row, selectedCell?.column, number);
+            if (!selectedCell) {
+              return;
+            }
+            addCellNote(number);
+            setCellValue(number);
           }}
         >
           {number}
