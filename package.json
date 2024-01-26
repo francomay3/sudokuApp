@@ -1,7 +1,8 @@
 {
   "name": "@francomay3/sudoku",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "dist/SudokuApp.umd.js",
+  "types": "index.d.ts",
   "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
