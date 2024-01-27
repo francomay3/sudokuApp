@@ -1,19 +1,22 @@
 import styled from "styled-components";
 
 import { SudokuStateManager } from "../../hooks/useSudokuStateManager";
-import { Value } from "../../models";
+import { InputMode, Value } from "../../models";
 import {
   boardLinesColor,
   errorBackgroundColor,
   errorTextColor,
   inputTextColor,
-  relevantCellsColor,
-  selectedCellColor,
+  notesRelevantCellsColor,
+  notesSelectedCellColor,
+  valuesRelevantCellsColor,
+  valueSselectedCellColor,
 } from "../../utils/styles";
 
 type WrapperProps = {
   column: number;
   hasError: boolean;
+  inputtingNotes: boolean;
   isInLineOfSelectedCell: boolean;
   isSameValueAsSelectedCell: boolean;
   isSelected: boolean;
@@ -24,6 +27,7 @@ type WrapperProps = {
 
 const getBackgroundColor = ({
   hasError,
+  inputtingNotes,
   isInLineOfSelectedCell,
   isSameValueAsSelectedCell,
   isSelected,
@@ -33,10 +37,10 @@ const getBackgroundColor = ({
     return errorBackgroundColor;
   }
   if (isSelected || isSameValueAsSelectedCell) {
-    return selectedCellColor;
+    return inputtingNotes ? notesSelectedCellColor : valueSselectedCellColor;
   }
   if (isInLineOfSelectedCell || isSelectedCellInBigSquare) {
-    return relevantCellsColor;
+    return inputtingNotes ? notesRelevantCellsColor : valuesRelevantCellsColor;
   }
   return "white";
 };
@@ -52,8 +56,8 @@ const Wrapper = styled.div.withConfig({
       "selectedCellIsEditable",
     ].includes(prop),
 })<WrapperProps>`
-  background-color: ${(props) => getBackgroundColor(props)};
   aspect-ratio: 1;
+  background-color: ${(props) => getBackgroundColor(props)};
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -87,9 +91,6 @@ const ValueWrapper = styled.div.withConfig({
   grid-row: 1 / 4;
   justify-content: center;
   line-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 `;
 
 const NoteWrapper = styled.div<{ note: number }>`
@@ -139,10 +140,13 @@ const Cell = ({
     cellHasError,
     cellIsEditable,
     cellNotes,
+    inputMode,
     selectedCell,
     selectedCellValue,
     setSelectedCell,
   } = sudokuStateManager;
+
+  const inputtingNotes = inputMode === InputMode.Notes;
 
   const selectedCellIsEditable =
     selectedCell && cellIsEditable(selectedCell.row, selectedCell.column);
@@ -165,15 +169,16 @@ const Cell = ({
 
   return (
     <Wrapper
-      hasError={hasError}
-      selectedCellIsEditable={selectedCellIsEditable}
-      isSelectedCellInBigSquare={isSelectedCellInBigSquare}
-      row={row}
       column={column}
-      onClick={() => setSelectedCell({ row, column })}
-      isSelected={isSelected}
+      hasError={hasError}
+      inputtingNotes={inputtingNotes}
       isInLineOfSelectedCell={isInLineOfSelectedCell}
       isSameValueAsSelectedCell={isSameValueAsSelectedCell}
+      isSelected={isSelected}
+      isSelectedCellInBigSquare={isSelectedCellInBigSquare}
+      onClick={() => setSelectedCell({ row, column })}
+      row={row}
+      selectedCellIsEditable={selectedCellIsEditable}
     >
       {value ? (
         <ValueWrapper

@@ -31,7 +31,7 @@ const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
     <Grid>
       <ToggleButton
         type="checkbox"
-        variant={inputMode === InputMode.Notes ? "primary" : "secondary"}
+        variant={inputMode === InputMode.Notes ? "success" : "secondary"}
         id="toggle-check"
         checked={inputMode === InputMode.Notes}
         value="1"
