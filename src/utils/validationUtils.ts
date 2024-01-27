@@ -1,4 +1,5 @@
 import { Input, Row, State } from "../models";
+
 import { compose, rotate90 } from "./getNewSudoku";
 
 type TransformState = (state: State) => State;

@@ -1,21 +1,33 @@
-import Button from "react-bootstrap/Button";
-import ToggleButton from "react-bootstrap/ToggleButton";
 import styled from "styled-components";
 
 import { SudokuStateManager } from "../hooks/useSudokuStateManager";
 import { InputMode } from "../models";
+import { mobileBreakpoint } from "../utils/styles";
+
+import Button from "./Button";
 
 interface UserInputsProps {
   sudokuStateManager: SudokuStateManager;
 }
 
-const Grid = styled.div`
+const UserInputButton = styled(Button)`
+  width: 100%;
+  aspect-ratio: 1;
+
+  @media (max-width: ${mobileBreakpoint}) {
+    padding-inline: 0.5rem;
+    aspect-ratio: 2.7;
+  }
+`;
+
+const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: auto repeat(3, 1fr);
+  grid-template-rows: repeat(4, auto);
   gap: 0.5rem;
-  width: 100%;
-  height: 100%;
+  flex-basis: auto;
+  justify-items: center;
+  align-items: center;
 `;
 
 const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
@@ -30,21 +42,17 @@ const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
     undoHistory,
   } = sudokuStateManager;
   return (
-    <Grid>
-      <ToggleButton
-        type="checkbox"
-        variant={inputMode === InputMode.Notes ? "success" : "secondary"}
-        id="toggle-check"
-        checked={inputMode === InputMode.Notes}
-        value="1"
+    <Wrapper>
+      <UserInputButton
         onClick={toggleInputMode}
+        active={inputMode === InputMode.Notes}
       >
         Notes {inputMode === InputMode.Notes ? "On" : "Off"}
-      </ToggleButton>
-      <Button disabled={hasWon} onClick={undoHistory}>
+      </UserInputButton>
+      <UserInputButton disabled={hasWon} onClick={undoHistory}>
         Undo
-      </Button>
-      <Button
+      </UserInputButton>
+      <UserInputButton
         onClick={() => {
           if (!selectedCell) {
             return;
@@ -54,14 +62,11 @@ const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
         }}
       >
         Erase
-      </Button>
+      </UserInputButton>
 
       {Array.from({ length: 9 }, (_, i) => i + 1).map((number) => (
-        <Button
+        <UserInputButton
           key={number}
-          style={{
-            fontSize: "2rem",
-          }}
           onClick={() => {
             if (!selectedCell) {
               return;
@@ -71,9 +76,9 @@ const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
           }}
         >
           {number}
-        </Button>
+        </UserInputButton>
       ))}
-    </Grid>
+    </Wrapper>
   );
 };
 

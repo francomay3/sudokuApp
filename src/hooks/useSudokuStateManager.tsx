@@ -29,6 +29,7 @@ const useSudokuStateManager = () => {
   };
   useEffect(() => {
     addToHistory(initialSudokuState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setStateHandler = (newState: State) => {
@@ -133,17 +134,14 @@ const useSudokuStateManager = () => {
     newState[selectedCell.row][selectedCell.column].value = newValue;
     setStateHandler(getValidatedState(newState));
   };
-  const setDifficultyAndRestartGame = (difficulty: Difficulty) => {
-    setDifficulty(difficulty);
-    setStateHandler(getNewSudoku(difficulty));
-  };
-  const setNewGame = () => {
-    const newState = getNewSudoku(difficulty);
+  const setNewGame = (diff: Difficulty) => {
+    const newState = getNewSudoku(diff);
+    setDifficulty(diff);
     setIsBoardFilled(false);
     setIsBoardValid(true);
     setHasWon(false);
     setSelectedCell(null);
-    setHistory(newState);
+    setHistory([newState]);
     setState(newState);
   };
   const toggleInputMode = () => {
@@ -170,7 +168,6 @@ const useSudokuStateManager = () => {
     selectedCell,
     selectedCellValue,
     setCellValue,
-    setDifficulty: setDifficultyAndRestartGame,
     setNewGame,
     setSelectedCell: handleSetSelectedCell,
     state,

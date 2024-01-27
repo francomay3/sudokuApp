@@ -7,3 +7,4 @@ export const notesRelevantCellsColor = "#e1ebf3";
 export const notesSelectedCellColor = "#badefb";
 export const valuesRelevantCellsColor = "#e1f3e1";
 export const valueSselectedCellColor = "#c0fbba";
+export const mobileBreakpoint = "625px";

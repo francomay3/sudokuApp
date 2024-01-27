@@ -1,8 +1,3 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import Col from "react-bootstrap/Col";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Stack from "react-bootstrap/Stack";
 import styled from "styled-components";
 
 import Board from "./components/board/Board";
@@ -12,12 +7,26 @@ import useClickAway from "./hooks/useClickAway";
 import useKeyPress from "./hooks/useKeyPressed";
 import useSudokuStateManager from "./hooks/useSudokuStateManager";
 import { keyboardInput } from "./utils/keyboardInputLogic";
+import { mobileBreakpoint } from "./utils/styles";
 
-const Wrapper = styled(Row)`
-  @media (max-width: 767px) {
-    flex-direction: column;
-    gap: 1rem;
+const Wrapper = styled.div`
+  display: flex;
+  gap: 0.5rem;
+
+  & * {
+    font-family: "Roboto", arial, sans-serif;
   }
+
+  @media (max-width: ${mobileBreakpoint}) {
+    flex-direction: column;
+  }
+`;
+
+const Col = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  gap: 0.5rem;
 `;
 
 function SudokuApp() {
@@ -28,19 +37,15 @@ function SudokuApp() {
   const ref = useClickAway(() => setSelectedCell(null));
 
   return (
-    <Container>
-      <Wrapper ref={ref}>
-        <Col xs={12} md={6}>
-          <Stack gap={2}>
-            <NewGameControls sudokuStateManager={sudokuStateManager} />
-            <Board sudokuStateManager={sudokuStateManager} />
-          </Stack>
-        </Col>
-        <Col xs={12} md={6}>
-          <UserInputs sudokuStateManager={sudokuStateManager} />
-        </Col>
-      </Wrapper>
-    </Container>
+    <Wrapper ref={ref}>
+      <Col>
+        <NewGameControls sudokuStateManager={sudokuStateManager} />
+        <Board sudokuStateManager={sudokuStateManager} />
+      </Col>
+      <Col>
+        <UserInputs sudokuStateManager={sudokuStateManager} />
+      </Col>
+    </Wrapper>
   );
 }
 

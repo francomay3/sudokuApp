@@ -1,43 +1,46 @@
-import Button from "react-bootstrap/Button";
-import Dropdown from "react-bootstrap/Dropdown";
-import Stack from "react-bootstrap/Stack";
-import Alert from "react-bootstrap/Alert";
+import styled from "styled-components";
 
 import { SudokuStateManager } from "../hooks/useSudokuStateManager";
 import { Difficulty } from "../models";
+import { mobileBreakpoint } from "../utils/styles";
+
+import Button from "./Button";
+
+const Difficulties = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-evenly;
+
+  @media (max-width: ${mobileBreakpoint}) {
+    & > button {
+      padding-inline: 0.5rem;
+    }
+  }
+`;
 
 interface NewGameControlsProps {
   sudokuStateManager: SudokuStateManager;
 }
 function NewGameControls({ sudokuStateManager }: NewGameControlsProps) {
-  const { difficulty, setDifficulty, setNewGame, hasWon } = sudokuStateManager;
+  const { difficulty, setNewGame, hasWon } = sudokuStateManager;
 
   return (
-    <Stack gap={2}>
-      <Stack direction="horizontal" gap={2}>
-        <Button onClick={setNewGame}>New Game</Button>
-        <Dropdown
-          onSelect={(difficulty) => {
-            setDifficulty(difficulty as Difficulty);
-          }}
-        >
-          <Dropdown.Toggle>{difficulty}</Dropdown.Toggle>
-          <Dropdown.Menu>
-            {Object.values(Difficulty).map((difficulty) => (
-              <Dropdown.Item eventKey={difficulty} key={difficulty}>
-                {difficulty}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      </Stack>
-      {hasWon && (
-        <Alert variant="success">
-          <Alert.Heading>Well done!</Alert.Heading>
-          <p>You have successfully completed the sudoku puzzle!</p>
-        </Alert>
-      )}
-    </Stack>
+    <>
+      <Button onClick={() => setNewGame(difficulty)}>New Game</Button>
+      <Difficulties>
+        {Object.values(Difficulty).map((d) => (
+          <Button
+            active={d === difficulty}
+            key={d}
+            onClick={() => setNewGame(d)}
+          >
+            {d}
+          </Button>
+        ))}
+      </Difficulties>
+
+      {hasWon && <p>You have successfully completed the sudoku puzzle!</p>}
+    </>
   );
 }
 

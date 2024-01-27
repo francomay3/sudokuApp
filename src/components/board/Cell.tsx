@@ -50,6 +50,7 @@ const Wrapper = styled.div.withConfig({
   shouldForwardProp: (prop) =>
     ![
       "hasError",
+      "inputtingNotes",
       "isInLineOfSelectedCell",
       "isSameValueAsSelectedCell",
       "isSelected",
@@ -57,7 +58,6 @@ const Wrapper = styled.div.withConfig({
       "selectedCellIsEditable",
     ].includes(prop),
 })<WrapperProps>`
-  aspect-ratio: 1;
   background-color: ${(props) => getBackgroundColor(props)};
   display: grid;
   grid-template-columns: repeat(3, 1fr);

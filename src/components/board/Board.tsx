@@ -13,6 +13,7 @@ const Wrapper = styled.div`
   border: 1px solid ${boardLinesColor};
   border-radius: 0.365rem;
   overflow: hidden;
+  aspect-ratio: 1;
 `;
 
 interface BoardProps {
