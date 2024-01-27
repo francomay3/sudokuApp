@@ -20,12 +20,14 @@ const Grid = styled.div`
 
 const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
   const {
-    setCellValue,
-    selectedCell,
-    toggleInputMode,
     addCellNote,
-    inputMode,
     clearCellNotes,
+    hasWon,
+    inputMode,
+    selectedCell,
+    setCellValue,
+    toggleInputMode,
+    undoHistory,
   } = sudokuStateManager;
   return (
     <Grid>
@@ -39,7 +41,9 @@ const UserInputs = ({ sudokuStateManager }: UserInputsProps) => {
       >
         Notes {inputMode === InputMode.Notes ? "On" : "Off"}
       </ToggleButton>
-      <Button>Undo</Button>
+      <Button disabled={hasWon} onClick={undoHistory}>
+        Undo
+      </Button>
       <Button
         onClick={() => {
           if (!selectedCell) {

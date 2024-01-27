@@ -8,7 +8,10 @@ import {
   checkIfBoardIsValid,
 } from "../utils/validationUtils";
 
+const initialSudokuState: State = getNewSudoku(Difficulty.Easy);
+
 const useSudokuStateManager = () => {
+  const [history, setHistory] = useState<State[]>([]);
   const [hasWon, setHasWon] = useState<boolean>(false);
   const [isBoardFilled, setIsBoardFilled] = useState<boolean>(false);
   const [isBoardValid, setIsBoardValid] = useState<boolean>(true);
@@ -18,15 +21,40 @@ const useSudokuStateManager = () => {
     row: number;
     column: number;
   } | null>(null);
-  const [state, setState] = useState<State>(getNewSudoku(Difficulty.Easy));
+  const [state, setState] = useState<State>(initialSudokuState);
+
+  const addToHistory = (newState: State) => {
+    const newHistory = [...structuredClone(history), newState];
+    setHistory(newHistory);
+  };
+  useEffect(() => {
+    addToHistory(initialSudokuState);
+  }, []);
 
   const setStateHandler = (newState: State) => {
     if (hasWon) {
       return;
     }
+    addToHistory(newState);
     setIsBoardFilled(checkIfBoardIsFilled(newState));
     setIsBoardValid(checkIfBoardIsValid(newState));
     setState(newState);
+  };
+
+  const undoHistory = () => {
+    if (hasWon) {
+      return;
+    }
+    const newHistory = structuredClone(history);
+    if (newHistory.length === 1) {
+      return;
+    }
+    const previousState = newHistory[newHistory.length - 2];
+    newHistory.pop();
+    setState(previousState);
+    setIsBoardValid(checkIfBoardIsValid(previousState));
+    setIsBoardFilled(checkIfBoardIsFilled(previousState));
+    setHistory(newHistory);
   };
 
   useEffect(() => {
@@ -110,11 +138,13 @@ const useSudokuStateManager = () => {
     setStateHandler(getNewSudoku(difficulty));
   };
   const setNewGame = () => {
+    const newState = getNewSudoku(difficulty);
     setIsBoardFilled(false);
     setIsBoardValid(true);
     setHasWon(false);
     setSelectedCell(null);
-    setState(getNewSudoku(difficulty));
+    setHistory(newState);
+    setState(newState);
   };
   const toggleInputMode = () => {
     setInputMode(
@@ -145,6 +175,7 @@ const useSudokuStateManager = () => {
     setSelectedCell: handleSetSelectedCell,
     state,
     toggleInputMode,
+    undoHistory,
   };
 };
 
