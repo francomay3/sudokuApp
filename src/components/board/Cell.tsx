@@ -6,9 +6,10 @@ import {
   boardLinesColor,
   errorBackgroundColor,
   errorTextColor,
-  inputTextColor,
+  notesInputTextColor,
   notesRelevantCellsColor,
   notesSelectedCellColor,
+  valuesInputTextColor,
   valuesRelevantCellsColor,
   valueSselectedCellColor,
 } from "../../utils/styles";
@@ -76,14 +77,36 @@ const Wrapper = styled.div.withConfig({
   user-select: none;
 `;
 
+const getInputTextColor = ({
+  hasError,
+  inputtingNotes,
+  isEditable,
+}: {
+  hasError: boolean;
+  inputtingNotes: boolean;
+  isEditable: boolean;
+}) => {
+  if (!isEditable) {
+    return "initial";
+  }
+  if (hasError) {
+    return errorTextColor;
+  }
+  if (inputtingNotes) {
+    return notesInputTextColor;
+  }
+  return valuesInputTextColor;
+};
+
 const ValueWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => !["isEditable", "hasError"].includes(prop),
+  shouldForwardProp: (prop) =>
+    !["isEditable", "hasError", "inputtingNotes"].includes(prop),
 })<{
   isEditable: boolean;
   hasError: boolean;
+  inputtingNotes: boolean;
 }>`
-  color: ${({ isEditable, hasError }) =>
-    isEditable ? (hasError ? errorTextColor : inputTextColor) : "initial"};
+  color: ${(props) => getInputTextColor(props)};
   align-items: center;
   display: flex;
   font-size: 130%;
@@ -182,8 +205,9 @@ const Cell = ({
     >
       {value ? (
         <ValueWrapper
-          isEditable={cellIsEditable(row, column)}
           hasError={hasError}
+          inputtingNotes={inputtingNotes}
+          isEditable={cellIsEditable(row, column)}
         >
           {value}
         </ValueWrapper>
