@@ -32,10 +32,11 @@ const Board = ({ sudokuStateManager }: BoardProps) => {
             row={rowIndex}
             sudokuStateManager={sudokuStateManager}
             value={input.value}
-            isSelected={
-              selectedCell?.row === rowIndex &&
-              selectedCell?.column === columnIndex
-            }
+            isSelected={Boolean(
+              selectedCell &&
+                selectedCell.row === rowIndex &&
+                selectedCell.column === columnIndex
+            )}
           />
         ))
       )}

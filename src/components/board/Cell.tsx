@@ -5,6 +5,7 @@ import { Value } from "../../models";
 import {
   boardLinesColor,
   errorBackgroundColor,
+  errorTextColor,
   inputTextColor,
   relevantCellsColor,
   selectedCellColor,
@@ -22,11 +23,11 @@ type WrapperProps = {
 };
 
 const getBackgroundColor = ({
-  isInLineOfSelectedCell,
-  isSelected,
-  isSameValueAsSelectedCell,
-  isSelectedCellInBigSquare,
   hasError,
+  isInLineOfSelectedCell,
+  isSameValueAsSelectedCell,
+  isSelected,
+  isSelectedCellInBigSquare,
 }: WrapperProps) => {
   if (hasError) {
     return errorBackgroundColor;
@@ -72,11 +73,13 @@ const Wrapper = styled.div.withConfig({
 `;
 
 const ValueWrapper = styled.div.withConfig({
-  shouldForwardProp: (prop) => !["isEditable"].includes(prop),
+  shouldForwardProp: (prop) => !["isEditable", "hasError"].includes(prop),
 })<{
   isEditable: boolean;
+  hasError: boolean;
 }>`
-  color: ${({ isEditable }) => (isEditable ? inputTextColor : "initial")};
+  color: ${({ isEditable, hasError }) =>
+    isEditable ? (hasError ? errorTextColor : inputTextColor) : "initial"};
   align-items: center;
   display: flex;
   font-size: 130%;
@@ -145,22 +148,24 @@ const Cell = ({
     selectedCell && cellIsEditable(selectedCell.row, selectedCell.column);
 
   const isSelectedCellInBigSquare = Boolean(
-    selectedCell?.row &&
-      selectedCell?.column &&
-      Math.floor(selectedCell?.row / 3) === Math.floor(row / 3) &&
-      Math.floor(selectedCell?.column / 3) === Math.floor(column / 3)
+    selectedCell &&
+      Math.floor(selectedCell.row / 3) === Math.floor(row / 3) &&
+      Math.floor(selectedCell.column / 3) === Math.floor(column / 3)
   );
 
-  const isInLineOfSelectedCell =
-    row === selectedCell?.row || column === selectedCell?.column;
+  const isInLineOfSelectedCell = Boolean(
+    selectedCell && (row === selectedCell.row || column === selectedCell.column)
+  );
 
   const isSameValueAsSelectedCell = Boolean(
     value && value === selectedCellValue
   );
 
+  const hasError = cellHasError(row, column);
+
   return (
     <Wrapper
-      hasError={cellHasError(row, column)}
+      hasError={hasError}
       selectedCellIsEditable={selectedCellIsEditable}
       isSelectedCellInBigSquare={isSelectedCellInBigSquare}
       row={row}
@@ -171,7 +176,10 @@ const Cell = ({
       isSameValueAsSelectedCell={isSameValueAsSelectedCell}
     >
       {value ? (
-        <ValueWrapper isEditable={cellIsEditable(row, column)}>
+        <ValueWrapper
+          isEditable={cellIsEditable(row, column)}
+          hasError={hasError}
+        >
           {value}
         </ValueWrapper>
       ) : (

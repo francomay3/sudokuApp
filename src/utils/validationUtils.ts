@@ -59,3 +59,29 @@ const clearErrors = (state: State) => {
 
 export const getValidatedState: TransformState = (state) =>
   compose(checkLines, checkBigSquares, clearErrors)(state);
+
+export const checkIfBoardIsFilled = (state: State) => {
+  let isFilled = true;
+  state.forEach((row) => {
+    row.forEach((cell) => {
+      if (!cell.value) {
+        isFilled = false;
+        return;
+      }
+    });
+  });
+  return isFilled;
+};
+
+export const checkIfBoardIsValid = (state: State) => {
+  let isValid = true;
+  state.forEach((row) => {
+    row.forEach((cell) => {
+      if (cell.error) {
+        isValid = false;
+        return;
+      }
+    });
+  });
+  return isValid;
+};

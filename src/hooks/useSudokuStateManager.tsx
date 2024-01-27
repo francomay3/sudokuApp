@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Difficulty, State, Value, InputMode } from "../models";
 import getNewSudoku from "../utils/getNewSudoku";
-import { getValidatedState } from "../utils/validationUtils";
+import {
+  getValidatedState,
+  checkIfBoardIsFilled,
+  checkIfBoardIsValid,
+} from "../utils/validationUtils";
 
 const useSudokuStateManager = () => {
+  const [hasWon, setHasWon] = useState<boolean>(false);
+  const [isBoardFilled, setIsBoardFilled] = useState<boolean>(false);
+  const [isBoardValid, setIsBoardValid] = useState<boolean>(true);
   const [inputMode, setInputMode] = useState<InputMode>(InputMode.Value);
   const [difficulty, setDifficulty] = useState<Difficulty>(Difficulty.Easy);
   const [selectedCell, setSelectedCell] = useState<{
@@ -12,6 +19,21 @@ const useSudokuStateManager = () => {
     column: number;
   } | null>(null);
   const [state, setState] = useState<State>(getNewSudoku(Difficulty.Easy));
+
+  const setStateHandler = (newState: State) => {
+    if (hasWon) {
+      return;
+    }
+    setIsBoardFilled(checkIfBoardIsFilled(newState));
+    setIsBoardValid(checkIfBoardIsValid(newState));
+    setState(newState);
+  };
+
+  useEffect(() => {
+    if (isBoardFilled && isBoardValid) {
+      setHasWon(true);
+    }
+  }, [isBoardFilled, isBoardValid]);
 
   const addCellNote = (value: number) => {
     if (inputMode !== InputMode.Notes || !selectedCell || selectedCellValue) {
@@ -25,7 +47,7 @@ const useSudokuStateManager = () => {
     } else {
       cell.notes.splice(index, 1);
     }
-    setState(newState);
+    setStateHandler(newState);
   };
   const clearCellNotes = () => {
     if (!selectedCell || selectedCellValue) {
@@ -34,7 +56,7 @@ const useSudokuStateManager = () => {
     const newState: State = [...state];
     const cell = newState[selectedCell.row][selectedCell.column];
     cell.notes = [];
-    setState(newState);
+    setStateHandler(newState);
   };
   const cellIsEditable = (row: number, column: number) =>
     !state?.[row]?.[column].isPreset;
@@ -50,7 +72,11 @@ const useSudokuStateManager = () => {
       return;
     }
     const { row, column } = newSelectedCell ?? {};
-    if (selectedCell?.row === row && selectedCell?.column === column) {
+    if (
+      selectedCell &&
+      selectedCell.row === row &&
+      selectedCell.column === column
+    ) {
       setSelectedCell(null);
     } else {
       setSelectedCell({ row, column });
@@ -73,17 +99,21 @@ const useSudokuStateManager = () => {
     const newState = structuredClone(state);
     if (newValue === selectedCellValue) {
       newState[selectedCell.row][selectedCell.column].value = null;
-      setState(getValidatedState(newState));
+      setStateHandler(getValidatedState(newState));
       return;
     }
     newState[selectedCell.row][selectedCell.column].value = newValue;
-    setState(getValidatedState(newState));
+    setStateHandler(getValidatedState(newState));
   };
   const setDifficultyAndRestartGame = (difficulty: Difficulty) => {
     setDifficulty(difficulty);
-    setState(getNewSudoku(difficulty));
+    setStateHandler(getNewSudoku(difficulty));
   };
   const setNewGame = () => {
+    setIsBoardFilled(false);
+    setIsBoardValid(true);
+    setHasWon(false);
+    setSelectedCell(null);
     setState(getNewSudoku(difficulty));
   };
   const toggleInputMode = () => {
@@ -96,22 +126,25 @@ const useSudokuStateManager = () => {
     state[row][column].error;
 
   return {
-    cellHasError,
-    clearCellNotes,
     addCellNote,
+    cellHasError,
     cellIsEditable,
     cellNotes,
     cellValue,
+    clearCellNotes,
     difficulty,
+    hasWon,
     inputMode,
+    isBoardFilled,
+    isBoardValid,
     selectedCell,
     selectedCellValue,
     setCellValue,
     setDifficulty: setDifficultyAndRestartGame,
-    toggleInputMode,
     setNewGame,
     setSelectedCell: handleSetSelectedCell,
     state,
+    toggleInputMode,
   };
 };
 
