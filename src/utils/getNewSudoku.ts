@@ -1,5 +1,3 @@
-import flatten from "lodash/flatten";
-
 import { State, Input, Value, Difficulty } from "../models";
 
 import * as initialValues from "./initialValues";
@@ -12,6 +10,18 @@ export const compose =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (x: any) =>
     fns.reduceRight((y, f) => f(y), x);
+
+type List<T> = T[] | null | undefined;
+type Many<T> = T | T[];
+function flatten<T>(array: List<Many<T>>): T[] {
+  if (!array) {
+    return [];
+  }
+
+  return array.reduce((acc: T[], val: Many<T>) => {
+    return acc.concat(Array.isArray(val) ? val : [val]);
+  }, []);
+}
 
 export const createInput: (value: Value) => Input = (value) => ({
   error: false,
@@ -59,27 +69,7 @@ const shuffleNumbers: (numbers: State) => State = (numbers) =>
     shuffleRowsAndRotate
   )(numbers);
 
-const getRandomSolvedSudoku = (difficulty: Difficulty) => {
-  let unshuffledValues;
-  switch (difficulty) {
-    case Difficulty.Easy:
-      unshuffledValues = initialValues.easy;
-      break;
-    case Difficulty.Medium:
-      unshuffledValues = initialValues.medium;
-      break;
-    case Difficulty.Hard:
-      unshuffledValues = initialValues.hard;
-      break;
-    case Difficulty.Expert:
-      unshuffledValues = initialValues.expert;
-      break;
-    case Difficulty.Master:
-      unshuffledValues = initialValues.master;
-      break;
-  }
-
-  return compose(shuffleNumbers, numbersToState)(unshuffledValues);
-};
+const getRandomSolvedSudoku = (difficulty: Difficulty) =>
+  compose(shuffleNumbers, numbersToState)(initialValues[difficulty]);
 
 export default getRandomSolvedSudoku;

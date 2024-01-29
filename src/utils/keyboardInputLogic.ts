@@ -16,6 +16,9 @@ export const keyboardInput = (
   if (!selectedCell) {
     return;
   }
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+    event.preventDefault();
+  }
   const { row, column } = selectedCell;
   if (event.key === "ArrowDown") {
     setSelectedCell({

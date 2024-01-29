@@ -15,6 +15,7 @@ const Wrapper = styled.div`
 
   & * {
     font-family: "Roboto", arial, sans-serif;
+    transition: all 0.15s ease-out;
   }
 
   @media (max-width: ${mobileBreakpoint}) {
