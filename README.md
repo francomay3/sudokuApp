@@ -2,6 +2,8 @@
 
 Welcome to Sudoku App, a fun and interactive way to play sudoku puzzles on your browser. Sudoku App is built with vite, react, typescript, and lodash. It lets you generate new solved sudokus, fill them in the app, and check for mistakes in real time. Sudoku App is still under development, so some of these features are not available yet. You can find more information about the app below.
 
+<img src="/src/assets/screenshot.png" alt="screenshot of the game" title="Screenshot of the component" style="max-width:500px;">
+
 ## Key Features
 
 - Sudoku Generation: Create new, solved sudoku puzzles with varying levels of difficulty.
